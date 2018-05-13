@@ -25,6 +25,6 @@ hs_err_pid*
 # 过滤不必要的目录和文件
 *.iml
 .idea
-rpc-common/target
-rpc-server/target
-rpc-client/target
+rpc-common/target/*
+rpc-server/target/*
+rpc-client/target/*
