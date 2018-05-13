@@ -1,2 +1,2 @@
 # minidubbo
-A Full RPC Framework Designed by Netty.
+A Full RPC Framework Based on Netty.
