@@ -21,3 +21,10 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# 过滤不必要的目录和文件
+*.iml
+.idea
+rpc-common/target
+rpc-server/target
+rpc-client/target
