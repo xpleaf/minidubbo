@@ -1,7 +1,7 @@
 package cn.xpleaf.rpc.common.pojo;
 
 /**
- * EchoResponse是server向client端发送数据的传输载体，将需要进行传输的pojo对象统一封装到EchoResponse对象中，
+ * RPCResponse是server向client端发送数据的传输载体，将需要进行传输的pojo对象统一封装到RPCResponse对象中，
  * 这样会为编解码工作带来很大的方便性和统一性，同时也可以携带其它信息， 对于后面对程序进行扩展会有非常大的帮助
  *
  * @author yeyonghao
