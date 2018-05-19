@@ -1,6 +1,7 @@
 package cn.xpleaf.rpc.client.discovery;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.zookeeper.KeeperException;
@@ -13,6 +14,8 @@ import org.slf4j.LoggerFactory;
 /**
  * 服务发现类，用于向zookeeper中查询服务提供者的地址（host:port） 暂时的设计思路是，每执行一次调用都会进行查询，而不是像dubbo那样
  * 会将interfaceName和服务地址缓存起来，后面会实现这一点
+ *
+ * 目前已经实现了负载均衡服务的功能，算法为随机负载均衡，即如果服务提供者有3个，会随机返回其中一个服务提供者的地址信息
  *
  * 另外，显然我这里都是使用zookeeper较为原生的API，原因很简单，当初入手zookeeper API时就是先从原生的学起，之后就直接应用在minidubbo上，
  * 在我的另外一个项目中[分布式爬虫系统]，使用的是较为高层次的API，即curator，如果有兴趣，可以参考一下使用方式：https://github.com/xpleaf/ispider
@@ -102,8 +105,8 @@ public class ServiceDiscovery {
             // 先获取接口名节点的子节点，子节点下是服务器的列表
             // 需要注意的是，如果不存在该节点，会有异常，此时下面的代码就不会执行
             List<String> children = zkClient.getChildren(node, false);
-            // 获取服务提供者列表的第一个，暂时先不考虑负载均衡的问题
-            String firstChildren = children.get(0);
+            // 随机负载均衡，会随机返回注册服务列表中的其中一个服务地址
+            String firstChildren = children.get(getRandomNum(children.size()));
             // 构建该服务提供者的完整节点名称
             String firstChildrenNode = node + "/" + firstChildren;
             // 获取服务提供者节点的数据，得到serverAddress的byte数组
@@ -118,11 +121,22 @@ public class ServiceDiscovery {
         return serverAddress;
     }
 
+    /**
+     * 返回一个给定范围内的随机数值，用于实现
+     * @param size
+     * @return
+     */
+    private Integer getRandomNum(int size) {
+        Random random = new Random();
+
+        return random.nextInt(size);
+    }
+
     /*
     public static void main(String[] args) throws Exception {
-        ServiceDiscovery serviceDiscovery = new ServiceDiscovery("localhost:2181");
+        ServiceDiscovery serviceDiscovery = new ServiceDiscovery("192.168.43.132:2181");
         serviceDiscovery.connectServer();
-        String serverAddress = serviceDiscovery.getServerAddress("/minidubbo/cn.xpleaf.service.UserService");
+        String serverAddress = serviceDiscovery.getServerAddress("/minidubbo/cn.xpleaf.app.service.ItemService");
         System.out.println("serverAddress: " + serverAddress);
     }
     */
